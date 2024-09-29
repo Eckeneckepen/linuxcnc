@@ -9,7 +9,7 @@ Source:		https://github.com/LinuxCNC/linuxcnc
 
 Distribution:	openSUSE Tumbleweed 20240924
 Vendor:		LinuxCNC.org
-Packager:	Carsten Prescher
+Packager:	%{packager}
 
 
 %define         __spec_build_pre %{nil}
@@ -23,23 +23,22 @@ It can drive milling machines, lathes, 3d printers, laser cutters, plasma cutter
 make -C yapps
 
 %build
-
 export PATH=$PATH:$PWD/yapps/target/bin
 export PYTHONPATH=$PWD/yapps/target/lib/python3.11/site-packages
 
-export LDFLAGS="-ltirpc -lstdc++"
-export PATH=$PATH:$PWD/opentarget/bin
+export LIBS="-ltirpc -lstdc++"
 
-rm -rf $RPM_BUILD_ROOT
 
 cd %{_sourcedir }
 
 ./autogen.sh
 ./configure --prefix=/opt --enable-non-distributable=yes
-make
+make -j 2
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+cd %{_sourcedir }
+make install DESTDIR=%{_topdir}/target
+echo "#### Install Ende"
 
 %files
 %defattr(-,root,root)
