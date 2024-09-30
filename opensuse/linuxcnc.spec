@@ -32,7 +32,7 @@ export LIBS="-ltirpc -lstdc++"
 cd %{_sourcedir }
 
 ./autogen.sh
-./configure --prefix=/opt --enable-non-distributable=yes
+./configure --with-realtime=uspace --prefix=/opt --enable-non-distributable=yes
 make -j 2
 
 %install
