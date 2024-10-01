@@ -2,7 +2,7 @@
 DESTDIR ?= ${CURDIR}/target
 
 all:
-	rpmbuild --buildroot=${DESTDIR} \
+	rpmbuild  --buildroot ${DESTDIR} \
 		--define "_topdir ${CURDIR}" \
 		--define "_builddir %{_topdir}" \
 		--define "_rpmdir %{_topdir}" \
@@ -13,4 +13,4 @@ all:
 		--define "_missing_doc_files_terminate_build 0" \
 		--define "_rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm" \
 		--define "packager `whoami`" \
-		-ba -v linuxcnc.spec
+		-vv -bb linuxcnc.spec

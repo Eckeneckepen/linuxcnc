@@ -26,17 +26,17 @@ make -C yapps
 export PATH=$PATH:$PWD/yapps/target/bin
 export PYTHONPATH=$PWD/yapps/target/lib/python3.11/site-packages
 
-export LIBS="-ltirpc -lstdc++"
+export LDFLAGS="-ltirpc -lstdc++"
 
 
-cd %{_sourcedir }
+cd %{_sourcedir}
 
 ./autogen.sh
 ./configure --with-realtime=uspace --prefix=/opt --enable-non-distributable=yes
 make -j 2
 
 %install
-cd %{_sourcedir }
+cd %{_sourcedir}
 make install DESTDIR=%{_topdir}/target
 echo "#### Install Ende"
 
