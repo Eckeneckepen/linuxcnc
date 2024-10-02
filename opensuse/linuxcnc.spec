@@ -11,6 +11,8 @@ Distribution:	openSUSE Tumbleweed 20240924
 Vendor:		LinuxCNC.org
 Packager:	%{packager}
 
+Requires:       python311-qt5
+
 
 %define         __spec_build_pre %{nil}
 %define		__spec_install_post %{nil}
@@ -18,6 +20,7 @@ Packager:	%{packager}
 %description
 LinuxCNC controls CNC machines.
 It can drive milling machines, lathes, 3d printers, laser cutters, plasma cutters, robot arms, hexapods, and more.
+
 
 %prep
 make -C yapps
@@ -74,10 +77,12 @@ echo "#### Install Ende"
 /opt/lib/tcltk/linuxcnc/msgs
 /opt/lib/tcltk/linuxcnc/msgs/*
 /opt/share/linuxcnc
-/opt/share/man/man1/*
-/opt/share/man/man3/*
-/opt/share/man/man9/*
+
+%docdir /opt/share/man
+/opt/share/man
+%docdir /opt/share/doc/linuxcnc
 /opt/share/doc/linuxcnc
+
 /opt/share/qtvcp
 /opt/share/glade
 /opt/share/axis
