@@ -3,7 +3,7 @@ DESTDIR ?= ${CURDIR}/target
 
 .PHONY: all clean
 
-all:
+rpm:
 	rpmbuild  --build-in-place --noclean --buildroot ${DESTDIR} \
 		--define "_topdir ${CURDIR}" \
 		--define "_builddir %{_topdir}" \
@@ -15,7 +15,8 @@ all:
 		--define "_missing_doc_files_terminate_build 0" \
 		--define "_rpmfilename %%{NAME}-%%{VERSION}-%%{RELEASE}.%%{ARCH}.rpm" \
 		--define "packager `whoami`" \
-		-vv -bb linuxcnc.spec
+		-bb linuxcnc.spec
 
 clean:
 	rm -rf linuxcnc-2.9.3++-1.x86_64.rpm
+	rm -rf target

@@ -27,7 +27,7 @@ make -C yapps
 
 %build
 export PATH=$PATH:$PWD/yapps/target/bin
-export PYTHONPATH=$PWD/yapps/target/lib/python3.11/site-packages
+export PYTHONPATH=$PWD/yapps/target/lib64/python3.11/site-packages
 
 export LDFLAGS="-ltirpc -lstdc++"
 
@@ -41,42 +41,20 @@ make -j 2
 %install
 cd %{_sourcedir}
 make install DESTDIR=%{_topdir}/target
-echo "#### Install Ende"
+echo "#### End of install"
 
 %files
 %defattr(-,root,root)
 
 /etc/X11/app-defaults/TkLinuxCNC
 /opt/etc/linuxcnc
-/opt/etc/linuxcnc/rtapi.conf
 /opt/bin/*
 /opt/lib64/*
-/opt/lib64/linuxcnc
-/opt/lib64/libpyplugin.so.0
-/opt/lib64/libposemath.so
-/opt/lib64/libtooldata.so.0
-/opt/lib64/liblinuxcncini.so.0
-/opt/lib64/librs274.so
-/opt/lib64/liblinuxcnc.a
-/opt/lib64/liblinuxcnchal.so.0
-/opt/lib64/libtooldata.so
-/opt/lib64/libposemath.so.0
-/opt/lib64/liblinuxcnchal.so
-/opt/lib64/librs274.so.0
-/opt/lib64/liblinuxcncini.so
-/opt/lib64/libnml.so
-/opt/lib64/libnml.so.0
 /opt/include/linuxcnc
 /opt/lib/linuxcnc
 /opt/lib/tcltk/linuxcnc
-/opt/lib/tcltk/linuxcnc/scripts
-/opt/lib/tcltk/linuxcnc/scripts/*
-/opt/lib/tcltk/linuxcnc/*
-/opt/lib/tcltk/linuxcnc/bin
-/opt/lib/tcltk/linuxcnc/bin/*
-/opt/lib/tcltk/linuxcnc/msgs
-/opt/lib/tcltk/linuxcnc/msgs/*
 /opt/share/linuxcnc
+/usr/lib64/python3.11/site-packages/*
 
 %docdir /opt/share/man
 /opt/share/man
@@ -89,6 +67,5 @@ echo "#### Install Ende"
 /opt/share/gtksourceview-4
 /opt/share/gscreen
 /opt/share/gmoccapy
-/usr/lib/python3.11/site-packages/*
 /usr/share/applications/*
 /usr/share/locale/*/LC_MESSAGES/*
