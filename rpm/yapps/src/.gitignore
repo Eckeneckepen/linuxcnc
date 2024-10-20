@@ -1,0 +1,8 @@
+/.gitattributes
+/*.egg-info
+/build
+/dist
+/README.txt
+*.pyc
+*.pyo
+/examples/expr.py
