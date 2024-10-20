@@ -616,7 +616,7 @@ $(patsubst %,../include/%,$(wildcard *.h)): ../include/%.h: %.h
 $(patsubst %,../include/%,$(wildcard *.hh)): ../include/%.hh: %.hh
 	$(Q)-cp $^ $@
 
-INSTALL=install -o root
+INSTALL=install
 DIR=$(INSTALL) -d -m 0755
 FILE=$(INSTALL) -m 0644
 TREE=cp -dR
