@@ -54,7 +54,7 @@ echo "#### End of install"
 /opt/lib/linuxcnc
 /opt/lib/tcltk/linuxcnc
 /opt/share/linuxcnc
-/usr/lib/python3.11/site-packages/*
+/usr/lib64/python3.11/site-packages/*
 
 %docdir /opt/share/man
 /opt/share/man
