@@ -206,6 +206,7 @@ static void handle_kinematicsSwitch(void);
   */
 void emcmotController(void *arg, long period)
 {
+    (void)arg;
     static int do_once = 1;
     if (do_once) {
         pcmd_p[0] = &(emcmotStatus->carte_pos_cmd.tran.x);
@@ -236,7 +237,7 @@ void emcmotController(void *arg, long period)
     /* calculate servo period as a double - period is in integer nsec */
     servo_period = period * 0.000000001;
 
-    if(period != last_period) {
+    if(period != (long)last_period) {
         emcmotSetCycleTime(period);
         last_period = period;
     }
@@ -340,6 +341,7 @@ static void handle_kinematicsSwitch(void) {
                ,anum,beforePose[anum],*pcmd_p[anum],*pcmd_p[anum]-beforePose[anum]);
     }
 #endif
+    axis_apply_ext_offsets_to_carte_pos(-1, pcmd_p);
     tpSetPos(&emcmotInternal->coord_tp, &emcmotStatus->carte_pos_cmd);
 } //handle_kinematicsSwitch()
 
@@ -1399,6 +1401,13 @@ static void get_pos_cmds(long period)
 
         axis_sync_carte_pos_to_teleop_tp(+1, pcmd_p); // teleop
 
+	if ( axis_jog_is_active() ) {
+	    /* is any limit disabled for this move? */
+	    if ( emcmotStatus->overrideLimitMask ) {
+		emcmotInternal->overriding = 1;
+	    }
+	}
+
 	/* the next position then gets run through the inverse kins,
 	    to compute the next positions of the joints */
 
@@ -1439,7 +1448,14 @@ static void get_pos_cmds(long period)
 
 	/* END OF OUTPUT KINS */
 
+	/* if overriding is true and the jog is complete, the limits should be re-enabled */
+	if ( ( emcmotInternal->overriding ) && ( !axis_jog_is_active() ) ) {
+	    emcmotStatus->overrideLimitMask = 0;
+	    emcmotInternal->overriding = 0;
+	}
+
 	/* end of teleop mode */
+
 	break;
 
     case EMCMOT_MOTION_DISABLED:

@@ -56,9 +56,9 @@ class BasicProbe(QtWidgets.QWidget, _HalWidgetBase):
         self.hilightStyle = "border: 2px solid red;"
 
         if INFO.MACHINE_IS_METRIC:
-            self.valid = QtGui.QRegExpValidator(QRegExp('^[+-]?((\d+(\.\d{,4})?)|(\.\d{,4}))$'))
+            self.valid = QtGui.QRegExpValidator(QRegExp(r'^[+-]?((\d+(\.\d{,4})?)|(\.\d{,4}))$'))
         else:
-            self.valid = QtGui.QRegExpValidator(QRegExp('^[+-]?((\d+(\.\d{,3})?)|(\.\d{,3}))$'))
+            self.valid = QtGui.QRegExpValidator(QRegExp(r'^[+-]?((\d+(\.\d{,3})?)|(\.\d{,3}))$'))
         self.setMinimumSize(600, 420)
         # load the widgets ui file
         self.filename = PATH.find_widget_path('basic_probe.ui')
@@ -307,7 +307,7 @@ class BasicProbe(QtWidgets.QWidget, _HalWidgetBase):
         if t != STATUS.get_current_tool():
             msg = "Probe tool # {}. not mounted in spindle".format(t)
             if not self.set_statusbar(msg,CRITICAL):
-                STATUS.emit('update-machine-log', msg, 'TIME')
+                STATUS.emit('update-machine-log', msg, 'TIME,CRITICAL')
                 ACTION.SET_ERROR_MESSAGE(msg)
             return
 

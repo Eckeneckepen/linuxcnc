@@ -2799,7 +2799,7 @@ ROTATION</string>
                      <enum>QFrame::Sunken</enum>
                     </property>
                     <property name="currentIndex">
-                     <number>1</number>
+                     <number>0</number>
                     </property>
                     <widget class="QWidget" name="page_machine">
                      <layout class="QHBoxLayout" name="horizontalLayout_8">
@@ -2826,20 +2826,11 @@ ROTATION</string>
                           <verstretch>0</verstretch>
                          </sizepolicy>
                         </property>
-                        <property name="frameShape">
-                         <enum>QFrame::NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Plain</enum>
-                        </property>
-                        <property name="documentTitle">
-                         <string>Machine Log</string>
-                        </property>
-                        <property name="readOnly">
+                        <property name="machine_log_severity_option" stdset="0">
                          <bool>true</bool>
                         </property>
-                        <property name="placeholderText">
-                         <string>Machine Log</string>
+                        <property name="integrator_log_option" stdset="0">
+                         <bool>false</bool>
                         </property>
                        </widget>
                       </item>
@@ -2869,21 +2860,6 @@ ROTATION</string>
                           <horstretch>0</horstretch>
                           <verstretch>0</verstretch>
                          </sizepolicy>
-                        </property>
-                        <property name="frameShape">
-                         <enum>QFrame::NoFrame</enum>
-                        </property>
-                        <property name="frameShadow">
-                         <enum>QFrame::Plain</enum>
-                        </property>
-                        <property name="documentTitle">
-                         <string>Integrator Log</string>
-                        </property>
-                        <property name="readOnly">
-                         <bool>true</bool>
-                        </property>
-                        <property name="placeholderText">
-                         <string>Integrator Log</string>
                         </property>
                         <property name="integrator_log_option" stdset="0">
                          <bool>true</bool>
@@ -16099,6 +16075,9 @@ ANGULAR</string>
                  <property name="frame">
                   <bool>true</bool>
                  </property>
+                 <property name="pinName" stdset="0">
+                  <string>jog-linear-increment</string>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -16184,6 +16163,9 @@ ANGULAR</string>
                  </property>
                  <property name="linear_option" stdset="0">
                   <bool>false</bool>
+                 </property>
+                 <property name="pinName" stdset="0">
+                  <string>jog-angular-increment</string>
                  </property>
                 </widget>
                </item>
@@ -16911,7 +16893,7 @@ ANGULAR</string>
          <number>2</number>
         </property>
         <property name="text">
-         <string>11:06:47 </string>
+         <string>12:30:35 PM</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -17018,7 +17000,7 @@ ANGULAR</string>
   </customwidget>
   <customwidget>
    <class>MachineLog</class>
-   <extends>QTextEdit</extends>
+   <extends>QWidget</extends>
    <header>qtvcp.widgets.machine_log</header>
   </customwidget>
   <customwidget>
@@ -18104,4 +18086,3 @@ ANGULAR</string>
   <buttongroup name="mode_buttonGroup"/>
  </buttongroups>
 </ui>
-

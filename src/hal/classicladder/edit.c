@@ -145,7 +145,7 @@ void LoadElementProperties(StrElement * Element)
 			case ELE_OUTPUT_SET:
 			case ELE_OUTPUT_RESET:
 				rtapi_strxcpy(TextToWrite,CreateVarName(Element->VarType,Element->VarNum, InfosGene->DisplaySymbols));
-//				CreateVarNameForElement( TextToWrite, Element, InfosGene->DisplaySymbols );
+//				CreateVarNameForElement( TextToWrite, sizeof(TextToWrite), Element, InfosGene->DisplaySymbols );
 				SetProperty(0,_("Variable"),TextToWrite,TRUE);
 				break;
 			case ELE_OUTPUT_JUMP:
@@ -1367,7 +1367,7 @@ void EditElementInRung(double x,double y)
 		if (EditDatas.NumElementSelectedInToolBar==EDIT_LONG_CONNECTION)
 		{
 			int ScanX = RungX;
-			while(EditDatas.Rung.Element[ScanX][RungY].Type==ELE_FREE && ScanX<RUNG_WIDTH-1 )
+			while(ScanX<RUNG_WIDTH-1 && EditDatas.Rung.Element[ScanX][RungY].Type==ELE_FREE)
 			{
 				EditDatas.Rung.Element[ScanX++][RungY].Type = ELE_CONNECTION;
 			}

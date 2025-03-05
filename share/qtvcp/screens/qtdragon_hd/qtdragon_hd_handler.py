@@ -150,6 +150,10 @@ class HandlerClass:
         txt3 = _translate("HandlerClass","Documents online")
         txt4 = _translate("HandlerClass","QtDragon online")
         txt5 = _translate("HandlerClass","Local files")
+
+        self.swoopPath = os.path.join(paths.IMAGEDIR,'lcnc_swoop.png')
+        self.swoopURL = QtCore.QUrl.fromLocalFile(self.swoopPath)
+
         self.html = """<html>
 <head>
 <title>Test page for the download:// scheme</title>
@@ -165,7 +169,7 @@ class HandlerClass:
 </body>
 </html>
 """%( txt1, txt2, txt3, txt4, os.path.expanduser('~/linuxcnc'), txt5,
-        os.path.join(paths.IMAGEDIR,'lcnc_swoop.png'))
+        self.swoopPath)
 
     def class_patch__(self):
         # override file manager load button
@@ -246,9 +250,7 @@ class HandlerClass:
         if flag:
             self.w.frame_macro_buttons.hide()
 
-        message = "--- QtDragon_hd Version {} on Linuxcnc {} ---".format(
-            VERSION, STATUS.get_linuxcnc_version())
-        STATUS.emit('update-machine-log', message, None)
+        self.log_version()
 
     #############################
     # SPECIAL FUNCTIONS SECTION #
@@ -453,7 +455,7 @@ class HandlerClass:
                 if os.path.exists(self.default_setup):
                     self.w.web_view.load(QtCore.QUrl.fromLocalFile(self.default_setup))
                 else:
-                    self.w.web_view.setHtml(self.html)
+                    self.w.web_view.setHtml(self.html, self.swoopURL)
                 self.w.web_view.page().urlChanged.connect(self.onLoadFinished)
         except Exception as e:
             print("No default setup file found - {}".format(e))
@@ -869,16 +871,15 @@ class HandlerClass:
             self.w.chk_override_limits.setChecked(True)
 
     def add_external_status(self, message, option):
-        level = option.get('LEVEL') or 0
-        log = option.get("LOG") or True
-        title = message.get('TITLE')
-        mess = message.get('SHORTTEXT')
-        logtext = message.get('DETAILS')
+        level = option.get('LEVEL', STATUS.DEFAULT) 
+        log = option.get("LOG", True)
+        title = message.get('TITLE', '')
+        mess = message.get('SHORTTEXT', '')
+        logtext = message.get('DETAILS', '')
 
-        self.add_status(mess,level,False)
-        if noLog:
-            return
-        STATUS.emit('update-machine-log', "{}\n{}".format(title, logtext), 'TIME')
+        self.add_status(mess, level, noLog=True)
+        if log:
+            STATUS.emit('update-machine-log', "{}\n{}".format(title, logtext), 'TIME')
 
     #######################
     # CALLBACKS FROM FORM #
@@ -1248,9 +1249,8 @@ class HandlerClass:
         AUX_PRGM.load_gcode_ripper()
 
     def btn_about_clicked(self):
-        txt1 = _translate("HandlerClass","QtDragon_hd Version")
-        txt2 = _translate("HandlerClass","on Linuxcnc")
-        self.add_status(f"{txt1} {VERSION} {txt2} {STATUS.get_linuxcnc_version()}", CRITICAL)
+        self.log_version()
+
         info = ACTION.GET_ABOUT_INFO()
         self.w.aboutDialog_.showdialog()
 
@@ -1461,7 +1461,7 @@ class HandlerClass:
                     self.w.web_view.load(QtCore.QUrl.fromLocalFile(fname))
                     self.add_status("{} : {}".format(_translate("HandlerClass","Loaded HTML file"), fname))
                 else:
-                    self.w.web_view.setHtml(self.html)
+                    self.w.web_view.setHtml(self.html, self.swoopURL)
             except Exception as e:
                 self.add_status("{} {} :()".format(_translate("HandlerClass","Can not Load HTML file"), fname,e))
             # look for PDF setup files
@@ -1697,7 +1697,7 @@ class HandlerClass:
             if os.path.exists(self.default_setup):
                 self.w.web_view.load(QtCore.QUrl.fromLocalFile(self.default_setup))
             else:
-                self.w.web_view.setHtml(self.html)
+                self.w.web_view.setHtml(self.html, self.swoopURL)
         except:
             pass
     # setup tab's web page back button
@@ -1709,7 +1709,7 @@ class HandlerClass:
                 if os.path.exists(self.default_setup):
                     self.w.web_view.load(QtCore.QUrl.fromLocalFile(self.default_setup))
                 else:
-                    self.w.web_view.setHtml(self.html)
+                    self.w.web_view.setHtml(self.html, self.swoopURL)
         except:
             pass
 
@@ -1992,6 +1992,20 @@ class HandlerClass:
             if not self._dialog_message is None:
                 name = self._dialog_message.get('NAME')
                 STATUS.emit('dialog-update',{'NAME':name,'response':answer})
+
+    def log_version(self):
+        if INFO.RIP_FLAG:
+            t = _translate("HandlerClass","(RIP)")
+        else:
+            t = _translate("HandlerClass","(Installed)")
+        mess = "--- {} {} {} {} {} ---".format(
+                _translate("HandlerClass","QtDragon HD Version"),
+                VERSION,
+                _translate("HandlerClass","on Linuxcnc"),
+                STATUS.get_linuxcnc_version(),
+                 t)
+        self.add_status(mess, CRITICAL,noLog=True)
+        STATUS.emit('update-machine-log', mess, None)
 
     #####################
     # KEY BINDING CALLS #

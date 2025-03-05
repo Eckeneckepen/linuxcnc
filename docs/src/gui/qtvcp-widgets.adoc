@@ -178,7 +178,7 @@ It is based on PyQt's `QGridLayout`.
 === 'HalBar' - HAL Bar Level Indicator
 
 .QtVCP `HalBar`: Panel demonstrating the HAL Bar Level Indicator
-image::images/qthalbar.png["QtVCP HalBar: Panel demonstrating the HAL Bar Level Indicator ",scale="25%"]
+image::images/qthalbar.png["QtVCP HalBar: Panel showing two options of the HAL Bar Level Indicator ",scale="25%"]
 
 This widget is used to indicate level or value, usually of a HAL s32/float pin. +
 You can also disable the HAL pin and use Qt signals or Python commands to change the level. +
@@ -188,6 +188,11 @@ HalBar is a subclass of the Bar widget, so it inherits these properties: +
 
 * 'stepColorList': a list of color strings, the number of colors defines the number of bars.
 * 'backgroundColor': a QColor definition of the background color.
+* 'indicatorColor': a QColor definition of the optional single color current value bar.
+* 'useMultiColorIndicator': bool switch for choosing the option of single or multicolor value bar.
+* 'split': the integer percentage split of max value bar versus current value bar (0 to 50%).
+* 'setVertical': bool switch for choosing vertical or horizontal indicator.
+* 'setInverted': bool switch for choosing inverted direction.
 * 'setMaximum': an integer that defines the maximum level of indication.
 * 'setMinimum': an integer that defines the lowest level of indication.
 
@@ -1416,6 +1421,53 @@ It is a comma separated list of keyword and data:
  *`SAVE:yes`*::
   Shows a save button.
 
+[[sub:qtvcp:widgets:operatorvalueline]]
+=== `OperatorValueLine` - Operator Value Line Entry Widget
+
+The operator enters values into this widget, which will be applied to a template and then optionally issued to the MDI either immediately or applied at a later time.  The widget supports the optional popup calculator, keyboard, or tool chooser for touchscreen-friendly entry by setting the `dialog_keyboard_option`.  To change which type of dialog is presented, edit the `dialog_code_option`.
+
+image::images/qtvcp_operator_value.png["QtVCP OperatorValueLine",scale="25%"]
+
+
+==== Formatting MDI Command
+The widget supports a formatting option which is passed to Python's string `format()` to produce the final output for the MDI command.  The special token `{value}` can be inserted anywhere in this format string where the value should appear.  The formatting property is called `mdi_command_format_option`, e.g.:
+
+* `M3 S{value}` to start the spindle at the speed entered by the operator.
+* `M6 T{value} G43 H{value}` to issue a tool change and tool length offset change from the tool number entered
+
+==== Automatic vs Deferred MDI Issue
+The widget may be configured to automatically issue the MDI command upon submit when `issue_mdi_on_submit_option` is set to `True`. If `False` issuing the command may be done at a later time via a signal or function call from another widget.
+
+In cases where `issue_mdi_on_submit_option` is `False`, calling the `issue_mdi()` function will issue the command.  Slots attached to widgets such as PushButtons can trigger the MDI command when pressed, e.g.:
+
+----
+    def setSpindleSpeed(self, event):
+        self.w.lineSpindleSpeed.issue_mdi()
+        ACTION.SET_MANUAL_MODE()
+
+    def setToolNumber(self, event):
+        self.w.lineToolNumber.issue_mdi()
+        ACTION.SET_MANUAL_MODE()
+----
+
+==== Pending State Styling Example
+
+The widget tracks whether a value entered is pending and has not yet been issued via the property `isPendingValue`.  This may be used to style the widget via the stylesheet.  This can be used to alert the operator that they entered a value but another action must be taken to apply it.
+
+The following style sheet excerpt will highlight the entry widget with a cyan background when values are pending and have not been applied.
+
+----
+#lineSpindleSpeed[isPendingValue=true],
+#lineToolNumber[isPendingValue=true] {
+    background: cyan;
+}
+
+#lineSpindleSpeed[isPendingValue=false],
+#lineToolNumber[isPendingValue=false] {
+    background: none;
+}
+----
+
 [[sub:qtvcp:widgets:mdiline]]
 === `MDILine` - MDI Commands Line Entry Widget
 
@@ -2590,11 +2642,54 @@ When using `STATUS` 's `request-dialog` function, the default launch name is *`T
 
 It is based on PyQt's _QDialog_.
 
+[[sub:qtvcp:widgets:toolchooserdialog]]
+=== `ToolChooserDialog` - Tool Chooser Dialog Widget
+
+.QtVCP `ToolChooserDialog`: Tool Chooser Dialog Widget
+image::images/qtvcp_toolChooser.png["QtVCP `ToolChooserDialog`: Tool Chooser Dialog Widget",scale="25%"]
+
+This widget allows the operator to select one of the tools defined in the tool table.  If a tool is selected and 'Apply' is pressed or the tool is double-clicked, the dialog will return the tool number selected.  This can be used in conjunction with the `OperatorValueLine` widget to create a tool change widget, for example.
+
+If there is an Focus Overlay widget present, it will signal it to display.
+
+When using `STATUS` 's `request-dialog` function, the default launch name is *`TOOLCHOOSER`*. 
+
+It is based on PyQt's _QDialog_.
+
+
 [[sub:qtvcp:widgets:machinelog]]
 === `MachineLog` - Machine Events Journal Display Widget
 
-//TODO MachineLog widget capture/example
-FIXME MachineLog documentation
+This widget displays various *log event messages* that have been output by the system during the current session.  This includes informational messages as well as errors.
+
+.QtVCP `MachineLog`: Machine Events Log in `machine_log` (plain) mode
+image::images/qtvcp_machinelog_plain.png["QtVCP `MachineLog`: Machine Log Widget",scale="25%"]
+
+
+.QtVCP `MachineLog`: Machine Events Log in `machine_log_severity` mode
+image::images/qtvcp_machinelog.png["QtVCP `MachineLog`: Machine Log Widget",scale="25%"]
+
+Two distinct types of logs may be displayed:
+
+- machine log (plain text or severity highlighted)
+- integrator log (plain text only)
+
+The type of log shown by the widget is controlled by the option properties of the widget.  By selecting `machine_log_option` or `integrator_log_option` the appropriate log will be displayed.  These options will display plain styled logs in a Qt `QTextEdit` widget.
+
+Additionally, there is a `machine_log_severity_option` property that may be chosen that will display the machine log in a variety of colors depending on the severity of the message, by using a `QTableWidget`.  The colors may be configured with the properties of the widget.
+
+==== Emitting Log messages with Severity
+
+Severity is conveyed via the `option` value sent along with the `STATUS` signal called `update-machine-log`.  The `option` parameter is a comma-delimited list, containing typically   
+
+```
+text = 'an error has occurred.'
+STATUS.emit('update-machine-log', text, 'TIME,ERROR')
+```
+
+==== Clearing the Log
+
+The log may be cleared by calling the `clear()` method of the widget.
 
 [[sub:qtvcp:widgets:macrotabdialog]]
 === `MacroTabDialog` - Macro Launch Dialog Widget
@@ -2643,7 +2738,7 @@ It is based on PyQt's _QDialog_.
 .QtVCP `CalculatorDialog`: Calculator Dialog Widget
 image::images/qtvcp_calculator.png["QtVCP CalculatorDialog: Calculator Dialog Widget",scale="25%"]
 
-This is a dialog to *display a calculator for numeric entry*, such as origin offset.
+This is a dialog to *display a calculator for numeric entry*, such as origin offset, spindle RPM, etc.
 
 It returns the entry via `STATUS` messages using a Python `DICT`.
 
@@ -2652,6 +2747,16 @@ The `DICT` contains at minimum, the name of the dialog requested and an ID code.
 When using ``STATUS``'s `request-dialog` function, the default launch name is *`CALCULATOR`*.
 
 It is based on PyQt's _QDialog_.
+
+==== Preferences file options
+
+In the `CALCULATOR` section of the preferences file the following options may be set:
+
+* `constValuesList` - A comma-delimited list of common values you might enter, that will appear on a dedicated row of buttons at the bottom of the calculator.  e.g. setting to `0.100, -0.100` would provide two buttons for +0.100 and -0.100 which are commonly used when edge-finding on inch mills.  Up to six (6) values may be entered, beyond that the list will be truncated.  Values must be valid floating point or integer.
+* `onShowBehavior` - A list of optional behaviors that will be triggered when the calculator dialog is shown.  Each option must be separated by a comma.
+  - `CLEAR_ALL` to issue a *Clear All* each time the calculator is shown.  This will clear any previously entered values from the last time the calculator was used and open with the display value set to `0`
+  - `FORCE_FOCUS` will force the focus to the calculator input field when the widget is shown.  This will allow a physical keyboard to provide input to the widget properly without additional clicks.  Also, it has the side-effect of selecting the current value, such that typing from a physical keyboard will replace the existing value unless the text selection is changed.
+* `acceptOnReturnKey` - If set to `True`, the calculator will accept the current value and close the dialog when the return key is pressed.  If set to `False`, the return key will be ignored and the *Apply* button must be clicked.
 
 [[sub:qtvcp:widgets:runfromlinedialog]]
 === `RunFromLine` - Run-From-Line Dialog Widget

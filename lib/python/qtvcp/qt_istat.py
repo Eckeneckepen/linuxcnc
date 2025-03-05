@@ -20,12 +20,29 @@ except:
 
 INIPATH = os.environ.get('INI_FILE_NAME', '/dev/null')
 
-HOME = os.environ.get('LINUXCNC_HOME', '/usr')
-if HOME is not None:
-    IMAGEDIR = os.path.join(HOME, "share", "qtvcp", "images")
+RIP_FLAG = bool(os.environ.get('LINUXCNC_RIP_FLAG', False))
+
+if RIP_FLAG:
+    BASE = os.environ.get('EMC2_HOME', None)
+else:
+    BASE = os.environ.get('LINUXCNC_HOME', None)
+    # fallback until the RIP_FLAG is common
+    if BASE is None:
+        BASE = os.environ.get('EMC2_HOME', None)
+# catch all
+if BASE is None:
+    BASE = '/usr'
+    if RIP_FLAG:
+        log.verbose('Linuxcnc Base directory not found in environmental variable: EMC2_HOME')
+    else:
+        log.verbose('Linuxcnc Base directory not found in environmental variable: LINUXCNC_HOME')
+
+log.verbose('Using Linuxcnc Base directory: {}'.format(BASE))
+
+if BASE is not None:
+    IMAGEDIR = os.path.join(BASE, "share", "qtvcp", "images")
 else:
     IMAGEDIR = None
-
 
 class _IStat(object):
     def __init__(self, ini=None):
@@ -37,6 +54,9 @@ class _IStat(object):
 
         self.LINUXCNC_IS_RUNNING = bool(INIPATH != '/dev/null')
         self.ENVIRO_INI_PATH = INIPATH
+
+        # Are we using RIP or installed version?
+        self.RIP_FLAG = RIP_FLAG
 
         if not self.LINUXCNC_IS_RUNNING:
             # Reset the log level for this module
@@ -50,7 +70,7 @@ class _IStat(object):
         self.USER_M_PATH_LIST = []
 
         self.IMAGE_PATH = IMAGEDIR
-        self.LIB_PATH = os.path.join(HOME, "share", "qtvcp")
+        self.LIB_PATH = os.path.join(BASE, "share", "qtvcp")
         self.TITLE = ""
         self.ICON = ""
         # this is updated in qtvcp.py on startup
@@ -639,7 +659,7 @@ class _IStat(object):
     ###################
     # return a found string or else None by default, anything else by option
     # since this is used in this file there are some workarounds for plasma machines
-    def get_error_safe_setting(self, heading, detail, default=None):
+    def get_error_safe_setting(self, heading, detail, default=None, warning = True):
         result = self.INI.find(heading, detail)
         if result:
             return result
@@ -647,7 +667,7 @@ class _IStat(object):
             if ('SPINDLE' in detail and self.MACHINE_IS_QTPLASMAC) or \
                ('ANGULAR' in detail and not self.HAS_ANGULAR_JOINT):
                 return default
-            else:
+            elif warning:
                 log.warning('INI Parsing Error, No {} Entry in {}, Using: {}'.format(detail, heading, default))
             return default
 

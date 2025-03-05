@@ -3507,7 +3507,7 @@ PLATE</string>
                         <enum>QFrame::Raised</enum>
                        </property>
                        <property name="currentIndex">
-                        <number>10</number>
+                        <number>0</number>
                        </property>
                        <widget class="QWidget" name="stackedWidget_mainTabPage1">
                         <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -5074,20 +5074,8 @@ ROTATION</string>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
                                </property>
-                               <property name="frameShape">
-                                <enum>QFrame::NoFrame</enum>
-                               </property>
-                               <property name="frameShadow">
-                                <enum>QFrame::Plain</enum>
-                               </property>
-                               <property name="documentTitle">
-                                <string>Machine Log</string>
-                               </property>
-                               <property name="readOnly">
+                               <property name="machine_log_severity_option" stdset="0">
                                 <bool>true</bool>
-                               </property>
-                               <property name="placeholderText">
-                                <string>Machine Log</string>
                                </property>
                               </widget>
                              </item>
@@ -5117,21 +5105,6 @@ ROTATION</string>
                                  <horstretch>0</horstretch>
                                  <verstretch>0</verstretch>
                                 </sizepolicy>
-                               </property>
-                               <property name="frameShape">
-                                <enum>QFrame::NoFrame</enum>
-                               </property>
-                               <property name="frameShadow">
-                                <enum>QFrame::Plain</enum>
-                               </property>
-                               <property name="documentTitle">
-                                <string>Integrator Log</string>
-                               </property>
-                               <property name="readOnly">
-                                <bool>true</bool>
-                               </property>
-                               <property name="placeholderText">
-                                <string>Integrator Log</string>
                                </property>
                                <property name="integrator_log_option" stdset="0">
                                 <bool>true</bool>
@@ -10095,6 +10068,9 @@ MM/MIN</string>
                       <property name="frame">
                        <bool>true</bool>
                       </property>
+                      <property name="pinName" stdset="0">
+                       <string>jog-linear-increment</string>
+                      </property>
                      </widget>
                     </item>
                    </layout>
@@ -10210,6 +10186,9 @@ MM/MIN</string>
                       </property>
                       <property name="linear_option" stdset="0">
                        <bool>false</bool>
+                      </property>
+                      <property name="pinName" stdset="0">
+                       <string>jog-angular-increment</string>
                       </property>
                      </widget>
                     </item>
@@ -14502,7 +14481,7 @@ SCROLL</string>
                           <number>0</number>
                          </property>
                          <item>
-                          <widget class="HalBar" name="hal_bar_2">
+                          <widget class="HalBar" name="hal_bar_x_load">
                            <property name="maximumSize">
                             <size>
                              <width>16777215</width>
@@ -14531,7 +14510,7 @@ SCROLL</string>
                           </widget>
                          </item>
                          <item>
-                          <widget class="HalBar" name="hal_bar_3">
+                          <widget class="HalBar" name="hal_bar_z_load">
                            <property name="maximumSize">
                             <size>
                              <width>16777215</width>
@@ -14624,6 +14603,9 @@ SCROLL</string>
                            </property>
                            <property name="text">
                             <string>Z LOAD</string>
+                           </property>
+                           <property name="textFormat">
+                            <enum>Qt::PlainText</enum>
                            </property>
                            <property name="alignment">
                             <set>Qt::AlignCenter</set>
@@ -16415,7 +16397,7 @@ SCROLL</string>
                 </widget>
                </item>
                <item row="3" column="0" colspan="2">
-                <widget class="HalBar" name="hal_bar">
+                <widget class="HalBar" name="hal_bar_spindle_load">
                  <property name="maximumSize">
                   <size>
                    <width>16777215</width>
@@ -16428,6 +16410,9 @@ SCROLL</string>
                    <green>50</green>
                    <blue>50</blue>
                   </color>
+                 </property>
+                 <property name="useMultiColorIndicator" stdset="0">
+                  <bool>false</bool>
                  </property>
                  <property name="setMaximum" stdset="0">
                   <number>100</number>
@@ -16541,7 +16526,7 @@ SCROLL</string>
                 </widget>
                </item>
                <item row="2" column="0" colspan="2">
-                <widget class="HalBar" name="hal_bar_4">
+                <widget class="HalBar" name="hal_bar_spindle_rpm">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
                    <horstretch>0</horstretch>
@@ -16569,6 +16554,9 @@ SCROLL</string>
                    <green>50</green>
                    <blue>50</blue>
                   </color>
+                 </property>
+                 <property name="useMultiColorIndicator" stdset="0">
+                  <bool>false</bool>
                  </property>
                  <property name="setMaximum" stdset="0">
                   <number>1000</number>
@@ -17853,7 +17841,7 @@ SCROLL</string>
              <number>2</number>
             </property>
             <property name="text">
-             <string>08:48:27 PM</string>
+             <string>12:33:34 PM</string>
             </property>
             <property name="alignment">
              <set>Qt::AlignCenter</set>
@@ -17959,7 +17947,7 @@ SCROLL</string>
   </customwidget>
   <customwidget>
    <class>MachineLog</class>
-   <extends>QTextEdit</extends>
+   <extends>QWidget</extends>
    <header>qtvcp.widgets.machine_log</header>
   </customwidget>
   <customwidget>
@@ -18289,8 +18277,8 @@ SCROLL</string>
    <slot>btn_dimensions_clicked()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>429</x>
-     <y>268</y>
+     <x>424</x>
+     <y>94</y>
     </hint>
     <hint type="destinationlabel">
      <x>0</x>
@@ -18801,8 +18789,8 @@ SCROLL</string>
    <slot>percent_loaded_changed()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>533</x>
-     <y>102</y>
+     <x>471</x>
+     <y>82</y>
     </hint>
     <hint type="destinationlabel">
      <x>484</x>
@@ -18909,8 +18897,8 @@ SCROLL</string>
   <slot>btn_systemtool_toggled()</slot>
  </slots>
  <buttongroups>
+  <buttongroup name="selectButtonGroup"/>
   <buttongroup name="page_buttonGroup"/>
   <buttongroup name="mode_buttonGroup"/>
-  <buttongroup name="selectButtonGroup"/>
  </buttongroups>
 </ui>
